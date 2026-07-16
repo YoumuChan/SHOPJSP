@@ -10,11 +10,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Coffo - 상점</title>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-<style>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"> 
+    <link rel="stylesheet" type="text/css" href="css/style.css"> 
+    <link rel="stylesheet" href="css/responsive.css"> 
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"> 
+    <style>
     /* 전체 폭을 깔끔하게 묶어서 화면 쩍벌 방지 */
     .shop_layout_container {
         max-width: 1140px !important;
@@ -25,7 +25,7 @@
     /* 슬라이더 영역의 좌우 화살표 버튼 공간 확보 */
     .slider_wrapper {
         position: relative !important;
-        padding: 0 45px !important; 
+        padding: 0 45px !important;
         margin-bottom: 20px;
     }
 
@@ -56,9 +56,9 @@
         padding: 0 !important;
         transition: background-color 0.2s ease-in-out !important;
     }
-    .slider_wrapper .owl-nav .owl-prev { left: 0px !important; background-color: #ff0000 !important; }
-    .slider_wrapper .owl-nav .owl-next { right: 0px !important; background-color: #424242 !important; }
-    .slider_wrapper .owl-nav .owl-prev:hover, .slider_wrapper .owl-nav .owl-next:hover { background-color: #111111 !important; }
+    .slider_wrapper .owl-nav .owl-prev { left: 0px !important; background-color: #ff0000 !important; } 
+    .slider_wrapper .owl-nav .owl-next { right: 0px !important; background-color: #424242 !important; } 
+    .slider_wrapper .owl-nav .owl-prev:hover, .slider_wrapper .owl-nav .owl-next:hover { background-color: #111111 !important; } 
 
     /* 상품 카드 디자인 규격 통일 */
     .product_card_custom {
@@ -81,7 +81,7 @@
     .coffee_img {
         position: relative !important;
         overflow: hidden !important;
-        height: 200px !important; 
+        height: 200px !important;
         background: #fafafa !important;
         display: flex !important;
         align-items: center !important;
@@ -118,10 +118,10 @@
     /* 설명글 최대 2줄 고정 */
     .custom-desc {
         font-size: 13px !important;
-        color: #666666 !important; 
+        color: #666666 !important;
         line-height: 1.4 !important;
         margin-bottom: 12px !important;
-        height: 36px !important; 
+        height: 36px !important;
         text-align: center !important;
         word-break: break-all !important;
         display: -webkit-box !important;
@@ -171,11 +171,9 @@
 </head>
 <body>
 
-    <% request.setAttribute("currentPage", "상점"); %>
-    <%@ include file="nav.jsp" %>
-    
-    <% DecimalFormat formatter = new DecimalFormat("#,###"); %>
-
+    <% request.setAttribute("currentPage", "상점"); %> 
+    <%@ include file="nav.jsp" %> 
+    <% DecimalFormat formatter = new DecimalFormat("#,###"); %> 
     <div class="shop_layout_container">
         <h1 class="section_title_custom" style="margin-top: 40px;">NEW ARRIVALS</h1>
         
@@ -188,23 +186,30 @@
                     if(newProducts != null && !newProducts.isEmpty()) {
                         for (Product product : newProducts) {
                             String filename = product.getFilenameString();
-                            if (filename == null || filename.isEmpty()) {
-                                filename = "img-1.png";
-                            } else if (!filename.contains(".")) {
-                                filename += ".png";
+                            String finalSrc = "images/img-1.png"; // 기본 이미지
+                            
+                            if (filename != null && !filename.isEmpty()) {
+                                if (filename.trim().startsWith("http")) {
+                                    finalSrc = filename.trim();
+                                } else {
+                                    if (!filename.contains(".")) {
+                                        filename += ".png";
+                                    }
+                                    finalSrc = "images/" + filename.trim();
+                                }
                             }
                 %>
                 <div class="item">
                     <div class="product_card_custom">
                         <div class="coffee_img">
-                            <img src="images/<%= filename %>" alt="<%= product.getNameString() %>" onerror="this.src='images/img-1.png';">
+                            <img src="<%= finalSrc %>" alt="<%= product.getNameString() %>" onerror="this.src='images/img-1.png';"> 
                         </div>
                         <div class="coffee_box">
-                            <h3 class="types_text"><%= product.getNameString() %></h3>
-                            <p class="custom-desc"><%= product.getDescripString() != null ? product.getDescripString() : "" %></p>
-                            <p class="looking_text"><%= formatter.format(product.getUnitPrice()) %>원</p>
+                            <h3 class="types_text"><%= product.getNameString() %></h3> 
+                            <p class="custom-desc"><%= product.getDescripString() != null ? product.getDescripString() : "" %></p> 
+                            <p class="looking_text"><%= formatter.format(product.getUnitPrice()) %>원</p> 
                             <div class="read_bt_custom">
-                                <a href="ShowProductData.jsp?id=<%= product.getProductIDString() %>">상세정보</a>
+                                <a href="ShowProductData.jsp?id=<%= product.getProductIDString() %>">상세정보</a> 
                             </div>
                         </div>
                     </div>
@@ -214,7 +219,7 @@
                     } else {
                 %>
                     <div class="item text-center py-5" style="width: 100%;">
-                        <p class="text-muted">현재 등록된 상품이 없습니다.</p>
+                        <p class="text-muted">현재 등록된 상품이 없습니다.</p> 
                     </div>
                 <%
                     }
@@ -230,23 +235,30 @@
                 if(listOfProducts != null && !listOfProducts.isEmpty()) {
                     for (Product product : listOfProducts) {
                         String filename = product.getFilenameString();
-                        if (filename == null || filename.isEmpty()) {
-                            filename = "img-1.png";
-                        } else if (!filename.contains(".")) {
-                            filename += ".png";
+                        String finalSrc = "images/img-1.png"; // 기본 이미지
+                        
+                        if (filename != null && !filename.isEmpty()) {
+                            if (filename.trim().startsWith("http")) {
+                                finalSrc = filename.trim();
+                            } else {
+                                if (!filename.contains(".")) {
+                                    filename += ".png";
+                                }
+                                finalSrc = "images/" + filename.trim();
+                            }
                         }
             %>
             <div class="col-lg-3 col-md-4 col-sm-6" style="margin-bottom: 30px;">
                 <div class="product_card_custom">
                     <div class="coffee_img">
-                        <img src="images/<%= filename %>" alt="<%= product.getNameString() %>" onerror="this.src='images/img-1.png';">
+                        <img src="<%= finalSrc %>" alt="<%= product.getNameString() %>" onerror="this.src='images/img-1.png';"> 
                     </div>
                     <div class="coffee_box">
-                        <h3 class="types_text"><%= product.getNameString() %></h3>
-                        <p class="custom-desc"><%= product.getDescripString() != null ? product.getDescripString() : "" %></p>
-                        <p class="looking_text"><%= formatter.format(product.getUnitPrice()) %>원</p>
+                        <h3 class="types_text"><%= product.getNameString() %></h3> 
+                        <p class="custom-desc"><%= product.getDescripString() != null ? product.getDescripString() : "" %></p> 
+                        <p class="looking_text"><%= formatter.format(product.getUnitPrice()) %>원</p> 
                         <div class="read_bt_custom">
-                            <a href="ShowProductData.jsp?id=<%= product.getProductIDString() %>">상세정보</a>
+                            <a href="ShowProductData.jsp?id=<%= product.getProductIDString() %>">상세정보</a> 
                         </div>
                     </div>
                 </div>
@@ -256,7 +268,7 @@
                 } else {
             %>
                 <div class="col-md-12 text-center py-5">
-                    <p class="text-muted">현재 등록된 상품이 없습니다.</p>
+                    <p class="text-muted">현재 등록된 상품이 없습니다.</p> 
                 </div>
             <%
                 }
@@ -264,8 +276,7 @@
         </div>
     </div>
 
-    <%@ include file="footer.jsp" %>
-
+    <%@ include file="footer.jsp" %> 
     <script src="js/jquery.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
@@ -278,18 +289,18 @@
             var newOwl = $('#new-carousel');
             if (newOwl.length > 0) {
                 newOwl.owlCarousel({
-                    loop: true, /* 🌟 무한 루프 활성화! 첫 상품과 마지막 상품이 끝없이 이어져서 돎 */
+                    loop: true,
                     margin: 30,
                     nav: true,
-                    autoplay: true,
+                    autoplay: true, 
                     autoplayTimeout: 3000,
                     autoplayHoverPause: true,
                     navText: ["<i class='fa fa-arrow-left'></i>", "<i class='fa fa-arrow-right'></i>"],
                     responsive: {
-                        0: { items: 1 },
-                        576: { items: 2 },
-                        768: { items: 3 },
-                        992: { items: 4 } /* 1:1 레이아웃 비율 고정 */
+                        0: { items: 1 }, 
+                        576: { items: 2 }, 
+                        768: { items: 3 }, 
+                        992: { items: 4 } 
                     }
                 });
             }

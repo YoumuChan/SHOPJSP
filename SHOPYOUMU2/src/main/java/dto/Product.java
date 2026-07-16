@@ -14,12 +14,12 @@ public class Product implements Serializable {
     private String conditionString;
     private String filenameString;
 
-    // 1. ±âº» »ý¼ºÀÚ
+    // 1. ï¿½âº» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public Product() {
         super();
     }
 
-    // 2. ID, ÀÌ¸§, °¡°ÝÀ» ¹Þ´Â »ý¼ºÀÚ
+    // 2. ID, ï¿½Ì¸ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public Product(String productIDString, String nameString, int unitPrice) {
         super();
         this.productIDString = productIDString;
@@ -28,7 +28,7 @@ public class Product implements Serializable {
     }
 
     // ==========================================
-    // 3. Getter & Setter (°ÔÅÍ & ¼¼ÅÍ)
+    // 3. Getter & Setter (ï¿½ï¿½ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½)
     // ==========================================
 
     public String getProductIDString() {

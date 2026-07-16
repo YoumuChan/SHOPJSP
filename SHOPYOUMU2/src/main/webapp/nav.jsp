@@ -1,26 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-    java.util.Date day = new java.util.Date();
-    String am_pm;
-    int hour = day.getHours();
-    int minute = day.getMinutes();
-    int second = day.getSeconds();
+<!-- 🚀 JSTL fmt 태그 라이브러리 추가 -->
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!-- 🚀 리소스 번들 연결 (사전 파일) -->
+<fmt:setBundle basename="resource" />
 
-    // AM/PM 계산 로직
-    if(hour / 12 == 0) {
-        am_pm = "AM";
-        if(hour == 0) hour = 12;
-    } else {
-        am_pm = "PM";
-        if(hour > 12) hour = hour - 12;
-    }
-    
-    // ⭐ 1:9:22 -> 1:09:22 처럼 한 자리수일 때 앞에 0 붙여주기
-    String minStr = (minute < 10) ? "0" + minute : String.valueOf(minute);
-    String secStr = (second < 10) ? "0" + second : String.valueOf(second);
-    
-    String CT = am_pm + " " + hour + ":" + minStr + ":" + secStr;
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,69 +22,210 @@
    
    <style>
       .login_bt ul { 
-         display: flex !important; 
+         display: flex !important;
          align-items: center !important; 
       }
+      .login_bt ul li {
+         display: inline-block !important;
+      }
       .login_bt ul li.dropdown { 
-         list-style: none; 
+         list-style: none;
+         position: relative !important;
       }
-      .login_bt ul li.dropdown a[data-toggle="dropdown"]::after { 
-         display: none; 
+      .login_bt ul li.dropdown a { 
+         cursor: pointer !important;
+         display: flex !important;
+         align-items: center !important;
+         color: #ffffff !important;
+         text-decoration: none !important;
       }
-      .dropdown-menu { 
-         min-width: 8rem; 
-         margin-top: 15px; 
+      .login_bt .user_icon {
+         margin-right: 8px !important;
       }
-      .dropdown-menu .dropdown-item {
-         color: #333333 !important; 
+      
+      /* 커스텀 드롭다운 */
+      .dropdown-menu-custom { 
+         display: none;
+         position: absolute !important;
+         top: 100% !important;
+         right: 0 !important;
+         min-width: 130px !important;
+         background-color: #ffffff !important;
+         border: 1px solid #e1e1e1 !important;
+         border-radius: 4px !important;
+         padding: 5px 0 !important;
+         margin-top: 10px !important;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+         z-index: 99999 !important;
       }
-      .dropdown-menu .dropdown-item:hover {
-         color: #ff0000 !important; 
-         background-color: #f8f9fa; 
+      .dropdown-menu-custom.show {
+         display: block !important;
+      }
+      .dropdown-menu-custom .dropdown-item {
+         color: #333333 !important;
+         display: block !important;
+         width: 100% !important;
+         padding: 8px 15px !important;
+         font-size: 14px !important;
+         text-align: left !important;
+         text-decoration: none !important;
+         background: none !important;
+         border: none !important;
+      }
+      .dropdown-menu-custom .dropdown-item:hover {
+         color: #ff0000 !important;
+         background-color: #f8f9fa !important; 
+      }
+      .dropdown-divider-custom {
+         height: 1px;
+         margin: 5px 0;
+         overflow: hidden;
+         background-color: #e9ecef;
       }
       
       .navbar-nav .nav-link {
          white-space: nowrap !important;
       }
+
+      /* 접속 시간 텍스트 스타일 */
+      .time-link-custom {
+         color: #ff0000 !important;
+         background-color: transparent !important;
+         background: none !important;
+         border: none !important;
+         box-shadow: none !important;
+         font-weight: 600 !important;    
+         font-size: 15px !important;
+         cursor: default !important;
+         pointer-events: none !important; 
+         display: inline-block !important;
+         white-space: nowrap !important;
+         padding: 0.5rem 1rem !important;
+         margin: 0 !important;
+      }
+
+      /* 다국어 선택 토글 버튼 스타일 */
+      .lang-toggle-link {
+         color: #ffffff !important;
+         font-weight: bold !important;
+         text-decoration: none !important;
+         font-size: 14px !important;
+         padding: 5px 12px !important;
+         border: 1px solid rgba(255, 255, 255, 0.4) !important;
+         border-radius: 20px !important;
+         transition: all 0.2s ease-in-out !important;
+         background-color: rgba(255, 255, 255, 0.1) !important;
+         white-space: nowrap !important;
+      }
+      .lang-toggle-link:hover {
+         background-color: #ff0000 !important;
+         border-color: #ff0000 !important;
+         color: #ffffff !important;
+         text-decoration: none !important;
+      }
    </style>
+   
+   <script type="text/javascript">
+       // JS 접속 시간 타이틀을 다국어 Properties와 연동하기 위해 변수에 바인딩
+       var clockPrefixText = "<fmt:message key='clock_prefix' />";
+
+       function startLiveClock() {
+           function updateClock() {
+               var now = new Date();
+               var hours = now.getHours();
+               var minutes = now.getMinutes();
+               var seconds = now.getSeconds();
+               var ampm = hours >= 12 ? 'PM' : 'AM';
+               
+               hours = hours % 12;
+               hours = hours ? hours : 12;
+               var minStr = minutes < 10 ? '0' + minutes : minutes;
+               var secStr = seconds < 10 ? '0' + seconds : seconds;
+               
+               var timeString = ampm + ' ' + hours + ':' + minStr + ':' + secStr;
+               var clockEl = document.getElementById("liveClock");
+               if (clockEl) {
+                   clockEl.innerHTML = clockPrefixText + timeString;
+               }
+           }
+           updateClock();
+           setInterval(updateClock, 1000); 
+       }
+
+       function toggleLoginDropdown(event) {
+           event.preventDefault();
+           event.stopPropagation();
+           var menu = document.getElementById("customLoginMenu");
+           if (menu) {
+               menu.classList.toggle("show");
+           }
+       }
+
+       window.onclick = function(event) {
+           var menu = document.getElementById("customLoginMenu");
+           if (menu && menu.classList.contains("show")) {
+               if (!event.target.matches('#loginDropdown') && 
+                   !event.target.matches('.user_icon') && 
+                   !event.target.matches('.fa-user')) {
+                   menu.classList.remove("show");
+               }
+           }
+       }
+       
+       window.addEventListener("DOMContentLoaded", startLiveClock);
+   </script>
 </head>
 <body>
    <div class="header_section">
       <div class="container">
          <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="main.jsp"><img src="images/logo.png"></a>
+           
+            <a class="navbar-brand" href="main.jsp"><img src="<%= request.getContextPath() %>/images/logo.png" alt="COFFO"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+ 
                <ul class="navbar-nav ml-auto">
-                  <li class="nav-item active"><a class="nav-link" href="main.jsp">홈</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">소개</a></li>
+                  <li class="nav-item active"><a class="nav-link" href="main.jsp"><fmt:message key="menu_home" /></a></li>
+                  <li class="nav-item"><a class="nav-link" href="#"><fmt:message key="menu_about" /></a></li>
+                  <li class="nav-item"><a class="nav-link" href="InProduct.jsp"><fmt:message key="menu_addProduct" /></a></li>
+                  <li class="nav-item"><a class="nav-link" href="Products.jsp"><fmt:message key="menu_shop" /></a></li>
+                  <li class="nav-item"><a class="nav-link" href="#"><fmt:message key="menu_blog" /></a></li>
+                  <li class="nav-item"><a class="nav-link" href="#"><fmt:message key="menu_contact" /></a></li>
                   
-                  <li class="nav-item"><a class="nav-link" href="InProduct.jsp">상품 등록</a></li>
-                  
-                  <li class="nav-item"><a class="nav-link" href="Products.jsp">상점</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">블로그</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">연락처</a></li>
-                  
-                  <li class="nav-item">
-                     <a class="nav-link" style="color: #ff0000; font-weight: bold; cursor: default;">
-                        현재 접속 시간 : <%= CT %>
-                     </a>
+                  <li class="nav-item" style="display: flex; align-items: center;">
+                     <span class="time-link-custom" id="liveClock">
+                        <fmt:message key="clock_prefix" /><fmt:message key="clock_calculating" />
+                     </span>
+                  </li>
+
+                  <!-- 다국어 토글 연동 (KR/KO ↔ US/EN 토글) -->
+                  <li class="nav-item" style="display: flex; align-items: center; margin-left: 10px;">
+                     <% 
+                         String curLang = (String) session.getAttribute("currentLang"); 
+                         if ("en".equals(curLang)) { 
+                     %>
+                         <a href="setLocale.jsp?lang=ko" class="lang-toggle-link">🇰🇷 KO</a>
+                     <% } else { %>
+                         <a href="setLocale.jsp?lang=en" class="lang-toggle-link">🇺🇸 EN</a>
+                     <% } %>
                   </li>
                </ul>
+               
                <form class="form-inline my-2 my-lg-0">
                   <div class="login_bt">
                      <ul>
                         <li class="dropdown">
-                           <a href="#" id="loginDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <span class="user_icon"><i class="fa fa-user" aria-hidden="true"></i></span>로그인
-                        </a>
-                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="loginDropdown">
-                              <a class="dropdown-item" href="login.jsp">로그인</a>
-                              <a class="dropdown-item" href="register.jsp">회원가입</a>
-                              <div class="dropdown-divider"></div>
-                              <a class="dropdown-item" href="mypage.jsp">마이페이지</a>
+                           <a href="#" id="loginDropdown" onclick="toggleLoginDropdown(event)">
+                              <span class="user_icon"><i class="fa fa-user" aria-hidden="true"></i></span><fmt:message key="menu_login" />
+                           </a>
+     
+                           <div class="dropdown-menu-custom" id="customLoginMenu">
+                              <a class="dropdown-item" href="login.jsp"><fmt:message key="menu_login" /></a>
+                              <a class="dropdown-item" href="register.jsp"><fmt:message key="menu_register" /></a>
+                              <div class="dropdown-divider-custom"></div>
+                              <a class="dropdown-item" href="mypage.jsp"><fmt:message key="menu_mypage" /></a>
                            </div>
                         </li>
                         <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
@@ -117,8 +241,6 @@
        <div class="container">
            <p style="margin: 0; color: #666; font-size: 14px;">
                <a href="main.jsp" style="color: #666; text-decoration: none;">Home</a>
-               
-               <%-- currentPage가 있을 때만 ' > 페이지명' 출력 --%>
                <% if(request.getAttribute("currentPage") != null) { %>
                    &nbsp;>&nbsp; 
                    <strong style="color: #ff0000;"><%= request.getAttribute("currentPage") %></strong>
@@ -126,9 +248,5 @@
            </p>
        </div>
    </div>
-
-   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 </body>
 </html>
